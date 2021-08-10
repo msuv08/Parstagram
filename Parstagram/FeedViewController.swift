@@ -48,8 +48,18 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         let user = post["author"] as! PFUser
        
-        cell.usernameLabel.text = user.username
-        cell.captionLabel.text = post["caption"] as! String
+//        cell.usernameLabel.text = user.username
+        cell.captionLabel.text = post["caption"] as? String
+        
+        let boldText = user.username! + " "
+        let attributes = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 18)]
+        let attributedString = NSMutableAttributedString(string:boldText, attributes:attributes)
+
+        let captionText = (post["caption"] as? String)!
+        let captionString = NSMutableAttributedString(string:captionText)
+        attributedString.append(captionString)
+        
+        cell.captionLabel.attributedText = attributedString
         
         let imageFile = post["image"] as! PFFileObject
         let urlString = imageFile.url!
