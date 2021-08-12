@@ -13,6 +13,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     @IBOutlet weak var tableView: UITableView!
     
+    var refreshControl:UIRefreshControl!
     var posts = [PFObject]()
     
     override func viewDidLoad() {
@@ -20,12 +21,20 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         tableView.delegate = self
         tableView.dataSource = self
+        
         // Do any additional setup after loading the view.
+        
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(onRefresh), for: .valueChanged)
+        tableView.insertSubview(refreshControl, at: 0)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        self.queryPosts()
+    }
+    
+    func queryPosts() {
         let query = PFQuery(className: "Posts")
         query.includeKey("author")
         query.limit = 20
@@ -38,13 +47,26 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
+    @objc func onRefresh() {
+        run(after: 2) {
+            self.queryPosts()
+            print("Attempting to reload data")
+            self.refreshControl.endRefreshing()
+        }
+    }
+    
+    func run(after wait: TimeInterval, closure: @escaping () -> Void) {
+        let queue = DispatchQueue.main
+        queue.asyncAfter(deadline: DispatchTime.now() + wait, execute: closure)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell") as! PostTableViewCell
-        let post = posts[indexPath.row]
+        let post = posts[posts.count - indexPath.row - 1]
         
         let user = post["author"] as! PFUser
        
