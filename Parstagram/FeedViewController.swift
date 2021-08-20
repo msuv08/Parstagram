@@ -36,7 +36,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func queryPosts() {
         let query = PFQuery(className: "Posts")
-        query.includeKey("author")
+        query.includeKeys(["author", "comments", "comments.author"])
         query.limit = 20
         
         query.findObjectsInBackground { (posts, error) in
@@ -61,36 +61,67 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let post = posts[section]
+        let comments = (post["comments"] as? [PFObject]) ?? []
+        return comments.count + 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         return posts.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell") as! PostTableViewCell
-        let post = posts[posts.count - indexPath.row - 1]
+        let post = posts[indexPath.section]
+        print(indexPath.section)
+        print(indexPath.row)
+        let comments = (post["comments"] as? [PFObject]) ?? []
         
-        let user = post["author"] as! PFUser
-       
-//        cell.usernameLabel.text = user.username
-        cell.captionLabel.text = post["caption"] as? String
-        
-        let boldText = user.username! + " "
-        let attributes = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 18)]
-        let attributedString = NSMutableAttributedString(string:boldText, attributes:attributes)
+        if indexPath.row == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell") as! PostTableViewCell
+            
+            let user = post["author"] as! PFUser
+           
+    //        cell.usernameLabel.text = user.username
+            cell.captionLabel.text = post["caption"] as? String
+            
+            let boldText = user.username! + " "
+            let attributes = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 18)]
+            let attributedString = NSMutableAttributedString(string:boldText, attributes:attributes)
 
-        let captionText = (post["caption"] as? String)!
-        let captionString = NSMutableAttributedString(string:captionText)
-        attributedString.append(captionString)
-        
-        cell.captionLabel.attributedText = attributedString
-        
-        let imageFile = post["image"] as! PFFileObject
-        let urlString = imageFile.url!
-        let url = URL(string: urlString)!
-        
-        cell.photoView.af.setImage(withURL: url)
-        
-        return cell
+            let captionText = (post["caption"] as? String)!
+            let captionString = NSMutableAttributedString(string:captionText)
+            attributedString.append(captionString)
+            
+            cell.captionLabel.attributedText = attributedString
+            
+            let imageFile = post["image"] as! PFFileObject
+            let urlString = imageFile.url!
+            let url = URL(string: urlString)!
+            
+            cell.photoView.af.setImage(withURL: url)
+            
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell") as! CommentCell
+            
+            let comment = comments[indexPath.row - 1]
+            
+            let user = comment["author"] as! PFUser
+            let boldText = user.username! + " "
+            
+            let attributes = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 18)]
+            let attributedString = NSMutableAttributedString(string:boldText, attributes:attributes)
+
+            let captionText = (comment["text"] as? String)!
+            let captionString = NSMutableAttributedString(string:captionText)
+            attributedString.append(captionString)
+            cell.commentLabel.attributedText = attributedString
+            
+            return cell
+            
+        }
     }
+    
     @IBAction func onLogoutButton(_ sender: Any) {
         PFUser.logOut()
         
@@ -98,6 +129,24 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         let loginViewController = main.instantiateViewController(identifier: "LoginViewController")
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let delegate = windowScene.delegate as? SceneDelegate else {return}
         delegate.window?.rootViewController = loginViewController
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let post = posts[indexPath.section]
+        
+        let comment = PFObject(className: "Comments")
+        comment["text"] = "This is a random comment"
+        comment["post"] = post
+        comment["author"] = PFUser.current()!
+        
+        post.add(comment, forKey: "comments")
+        post.saveInBackground { (success, error) in
+            if success {
+                print("Comment saved" )
+            } else {
+                print("Error saving comment")
+            }
+        }
     }
     /*
     // MARK: - Navigation

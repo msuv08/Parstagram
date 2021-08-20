@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0481D23826D0696900D89D72 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0481D23726D0696900D89D72 /* CommentCell.swift */; };
 		04FE060126BE343E007FB1BC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04FE060026BE343E007FB1BC /* AppDelegate.swift */; };
 		04FE060326BE343E007FB1BC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04FE060226BE343E007FB1BC /* SceneDelegate.swift */; };
 		04FE060826BE343E007FB1BC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04FE060626BE343E007FB1BC /* Main.storyboard */; };
@@ -41,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0481D23726D0696900D89D72 /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		04FE05FD26BE343E007FB1BC /* Parstagram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Parstagram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04FE060026BE343E007FB1BC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		04FE060226BE343E007FB1BC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				04FE060026BE343E007FB1BC /* AppDelegate.swift */,
 				04FE060226BE343E007FB1BC /* SceneDelegate.swift */,
 				04FE060626BE343E007FB1BC /* Main.storyboard */,
+				0481D23726D0696900D89D72 /* CommentCell.swift */,
 				04FE063626BE5488007FB1BC /* PostTableViewCell.swift */,
 				04FE060926BE343F007FB1BC /* Assets.xcassets */,
 				04FE060B26BE343F007FB1BC /* LaunchScreen.storyboard */,
@@ -421,6 +424,7 @@
 				04FE063326BE37F8007FB1BC /* FeedViewController.swift in Sources */,
 				04FE060326BE343E007FB1BC /* SceneDelegate.swift in Sources */,
 				04FE063726BE5488007FB1BC /* PostTableViewCell.swift in Sources */,
+				0481D23826D0696900D89D72 /* CommentCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
